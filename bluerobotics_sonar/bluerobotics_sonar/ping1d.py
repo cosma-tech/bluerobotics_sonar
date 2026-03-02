@@ -124,13 +124,13 @@ class Ping1DNode(Node):
                     )
 
         # --- Configure Sonar ---
-        self.sonar.set_gain_setting(self.gain_setting)
-        self.sonar.set_mode_auto(self.mode_auto)
-        self.sonar.set_ping_enable(self.ping_enable)
-        self.sonar.set_ping_interval(self.ping_interval)
+        self.sonar.set_gain_setting(self.gain_setting, verify=False)
+        self.sonar.set_mode_auto(self.mode_auto, verify=False)
+        self.sonar.set_ping_enable(self.ping_enable, verify=False)
+        self.sonar.set_ping_interval(self.ping_interval, verify=False)
         self.sonar.set_range(int(self.scan_start * 1000),
-                             int(self.scan_length * 1000))
-        self.sonar.set_speed_of_sound(int(self.speed_of_sound * 1000))
+                             int(self.scan_length * 1000), verify=False)
+        self.sonar.set_speed_of_sound(int(self.speed_of_sound * 1000), verify=False)
         self.sonar.control_continuous_start(PING1D_PROFILE)
 
         # --- Publisher ---
@@ -187,21 +187,21 @@ class Ping1DNode(Node):
 
             # Apply the new settings to the sonar device
             if param.name == 'gain_setting':
-                self.sonar.set_gain_setting(self.gain_setting)
+                self.sonar.set_gain_setting(self.gain_setting, verify=False)
             if param.name == 'mode_auto':
-                self.sonar.set_mode_auto(self.mode_auto)
+                self.sonar.set_mode_auto(self.mode_auto, verify=False)
             if param.name == 'ping_enable':
-                self.sonar.set_ping_enable(self.ping_enable)
+                self.sonar.set_ping_enable(self.ping_enable, verify=False)
             if param.name == 'ping_interval':
-                self.sonar.set_ping_interval(self.ping_interval)
+                self.sonar.set_ping_interval(self.ping_interval, verify=False)
             if param.name == 'scan_start':
                 self.sonar.set_range(int(self.scan_start * 1000),
-                                     int(self.scan_length * 1000))
+                                     int(self.scan_length * 1000), verify=False)
             if param.name == 'scan_length':
                 self.sonar.set_range(int(self.scan_start * 1000),
-                                     int(self.scan_length * 1000))
+                                     int(self.scan_length * 1000), verify=False)
             if param.name == 'speed_of_sound':
-                self.sonar.set_speed_of_sound(int(self.speed_of_sound * 1000))
+                self.sonar.set_speed_of_sound(int(self.speed_of_sound * 1000), verify=False)
             if param.name == 'pings_per_second':
                 if self.pings_per_second > 0 and self.pings_per_second <= 50:
                     self.ping_interval = int(1000.0/self.pings_per_second)
