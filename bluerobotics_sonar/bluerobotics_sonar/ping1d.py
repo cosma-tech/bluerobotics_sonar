@@ -32,6 +32,8 @@ parameters, and publishes the sonar data to a topic. It also allows for
 dynamic reconfiguration of the sonar settings.
 """
 
+import time
+
 from brping import Ping1D
 from brping.definitions import PING1D_PROFILE
 from bluerobotics_sonar_msgs.msg import SonarPing1D
@@ -69,6 +71,7 @@ class Ping1DNode(Node):
             'baudrate': [115200, int],
             'topic': ['/sonar/ping1d/data', str],
             'frame_id': ['ping1d', str],
+            'init_retries': [5, int],
         }
 
         for param, [value, dtype] in params.items():
@@ -104,9 +107,15 @@ class Ping1DNode(Node):
             self.sonar.connect_udp(self.device, self.baudrate)
         else:
             self.sonar.connect_serial(self.device, self.baudrate)
-        if not self.sonar.initialize():
-            self.get_logger().info("Failed to initialize Ping!")
-            exit(1)
+        for attempt in range(1, self.init_retries + 1):
+            if self.sonar.initialize():
+                break
+            self.get_logger().warn(
+                f"Ping init attempt {attempt}/{self.init_retries} failed, retrying in 0.5s...")
+            if attempt == self.init_retries:
+                self.get_logger().error("Failed to initialize Ping after all retries!")
+                exit(1)
+            time.sleep(0.5)
 
         # --- Verify Firmware Version ---
         # Verify sonar firmware version is compatible
